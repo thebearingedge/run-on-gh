@@ -1,0 +1,24 @@
+name: test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    env:
+      PORT: 3000
+      DATABASE_URL: postgres://admin:password@localhost/test
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set Up Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.18.1
+    - name: Install NPM Dependencies
+      run: npm ci
+    - name: Start a PostgreSQL Instance
+      run: npm run db:start
+    - name: Verify that PostgreSQL is Online
+      run: node scripts/db-check.js
+    - name: Run Tests
+      run: npm test
